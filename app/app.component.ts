@@ -21,7 +21,7 @@ export class AppComponent implements OnInit, OnDestroy {
         routerNG: Router) {
 
         routerNG.events.subscribe((e) => {
-            console.log("--EVENT-->: " + e.toString());
+            // console.log("--EVENT-->: " + e.toString());
         });
     }
 
@@ -30,29 +30,33 @@ export class AppComponent implements OnInit, OnDestroy {
         console.log("AppComponent.ngOnInit()");
         this.checkForBlockScreen();
 
-        application.on(application.resumeEvent, () => {
-            console.log("----> application.resumeEvent");
+        var me = this;
+        application.on(application.resumeEvent, this.handleResumeEvent, this);
+    }
 
-            this.zone.run(() => {
-                this.blockScreenService.toggleShowBlockScreen();
-                this.checkForBlockScreen();
-            });
+    private handleResumeEvent() {
+        console.log("----> application.resumeEvent");
+
+        this.zone.run(() => {
+            // this.blockScreenService.toggleShowBlockScreen();
+            this.checkForBlockScreen();
         });
     }
 
     ngOnDestroy(): void {
-        application.off(application.resumeEvent);
+        console.log("AppComponent.ngOnDestroy()");
+        application.off(application.resumeEvent, this.handleResumeEvent, this);
         this.subscription.unsubscribe();
     }
 
     private checkForBlockScreen(): void {
-        console.log("----> checkForBlockScreen");
+        // console.log("----> checkForBlockScreen");
         if (!this.subscription) {
-            console.log("----> checkForBlockScreen - subscribing ....");
+            // console.log("----> checkForBlockScreen - subscribing ....");
             this.subscription = this.blockScreenService.showBlockScreen
                 .subscribe(res => {
                     if (res === true) {
-                        console.log("navigating to blockscreen");
+                        // console.log("navigating to blockscreen");
 
                         this.router.navigate([APP_ROUTES.BLOCKSCREEN]);
                     }

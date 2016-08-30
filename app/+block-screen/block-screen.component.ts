@@ -47,12 +47,12 @@ export class BlockScreenComponent implements OnInit, OnDestroy {
         // The actionBarHide and Show are called here to prevent the bar from visible
         // for a few seconds once the maintenance screen is shown.
         if (showBlockScreen === false) {
-            console.log('frame.canGoBack(): ', this.frame.canGoBack());
+            // console.log('frame.canGoBack(): ', this.frame.canGoBack());
             if (this.frame.canGoBack() === true) {
-                console.log('router back');
+                // console.log('router back');
                 this.router.back();
             } else {
-                console.log('route to home');
+                // console.log('route to home');
                 this.router.navigate([APP_ROUTES.HOME]);
             }
         }
