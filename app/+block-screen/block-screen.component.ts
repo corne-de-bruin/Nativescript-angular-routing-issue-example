@@ -5,17 +5,17 @@ import {Page} from 'ui/page';
 import {Frame} from 'ui/frame';
 import {BlockScreenService} from '../shared/block-screen.service';
 import {APP_ROUTES} from '../routes';
-
+import {Subscription} from "rxjs";
 @Component({
     selector: "BlockScreen",
     templateUrl: "./+block-screen/block-screen.component.html"
 })
 export class BlockScreenComponent implements OnInit, OnDestroy {
-
+    private subscribtion : Subscription; 
     constructor(private router: RouterExtensions,
-                private blockScreenService: BlockScreenService,
-                private frame: Frame,
-                private page:Page) {}
+        private blockScreenService: BlockScreenService,
+        private frame: Frame,
+        private page: Page) { }
 
     ngOnInit(): void {
         this.page.actionBarHidden = true;
@@ -25,7 +25,7 @@ export class BlockScreenComponent implements OnInit, OnDestroy {
             application.android.on(application.AndroidApplication.activityBackPressedEvent, this.backEvent);
         }
 
-        this.blockScreenService.showBlockScreen.subscribe(
+        this.subscribtion = this.blockScreenService.showBlockScreen.subscribe(
             res => {
                 this.handleShowBlockScreenUpdate(res);
             }
@@ -33,9 +33,10 @@ export class BlockScreenComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy(): void {
-        if(application.android) {
+        if (application.android) {
             application.android.off(application.AndroidApplication.activityBackPressedEvent, this.backEvent);
         }
+        this.subscribtion.unsubscribe();
     }
 
     backEvent(args) {
@@ -45,9 +46,9 @@ export class BlockScreenComponent implements OnInit, OnDestroy {
     private handleShowBlockScreenUpdate(showBlockScreen: boolean): void {
         // The actionBarHide and Show are called here to prevent the bar from visible
         // for a few seconds once the maintenance screen is shown.
-        if(showBlockScreen === false) {
+        if (showBlockScreen === false) {
             console.log('frame.canGoBack(): ', this.frame.canGoBack());
-            if(this.frame.canGoBack() === true) {
+            if (this.frame.canGoBack() === true) {
                 console.log('router back');
                 this.router.back();
             } else {
